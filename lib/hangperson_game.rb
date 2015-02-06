@@ -13,20 +13,46 @@ class HangpersonGame
   	@word = word
   	@guesses = ''
   	@wrong_guesses = ''
-  	@word_with_guesses = ''
-  	word.length.times {@word_with_guesses+='-'}
   end
 
   def guess(guess)
   	if guess=='' || !(guess =~ /[A-Za-z]/) || guess==nil
   		raise ArgumentError
   	elsif @word.include? guess 
-  		occurrences = (0 ... word.length).find_all { |i| word[i] == guess }
-  		occurrences.each {|i| @word_with_guesses[i]=guess}
-  		@guesses += guess if !@guesses.include? guess
+  		if !@guesses.include? guess
+  			@guesses += guess
+  		else
+  			false
+  		end
   	else
-  		@wrong_guesses += guess if !@wrong_guesses.include? guess
+  		if !@wrong_guesses.include? guess
+  			@wrong_guesses += guess 
+  		else
+  			false
+  		end
   	end
+  end
+
+  def check_win_or_lose
+  	if @wrong_guesses.length >= 7
+  		:lose 
+  	elsif !(word_with_guesses.include? '-')
+  		:win 
+  	else
+  		:play
+  	end
+  end
+
+  def word_with_guesses
+  	word_with_guesses = ''
+  	@word.split("").each do |l|
+  		if @guesses.include? l 
+  			word_with_guesses += l 
+  		else
+  			word_with_guesses += '-'
+  		end
+  	end
+  	return word_with_guesses
   end
 
   def self.get_random_word
