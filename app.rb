@@ -24,10 +24,6 @@ class HangpersonApp < Sinatra::Base
   get '/new' do
     erb :new
   end
-
-  post '/new' do
-    redirect '/show'
-  end
   
   post '/create' do
     # NOTE: don't change next line - it's needed by autograder!
@@ -43,8 +39,24 @@ class HangpersonApp < Sinatra::Base
   # If a guess is invalid, set flash[:message] to "Invalid guess."
   post '/guess' do
     letter = params[:guess].to_s[0]
-    ### YOUR CODE HERE ###
-    redirect '/show'
+    begin
+      new_guess = @game.guess(letter)
+    rescue
+      flash[:message] = "Invalid guess."
+      redirect '/show'
+    end
+
+    if new_guess == false
+      flash[:message] = "You have already used that letter."
+    end
+
+    if @game.check_win_or_lose == :play
+      redirect '/show'
+    elsif @game.check_win_or_lose == :win
+      erb :win
+    elsif @game.check_win_or_lose == :lose
+      erb :lose
+    end
   end
   
   # Everytime a guess is made, we should eventually end up at this route.
@@ -53,18 +65,15 @@ class HangpersonApp < Sinatra::Base
   # Notice that the show.erb template expects to use instance variables
   # @wrong_guesses and @word_with_guesses, so set those up here.
   get '/show' do
-    ### YOUR CODE HERE ###
-    erb :show # You may change/remove this line
+    erb :show
   end
   
   get '/win' do
-    ### YOUR CODE HERE ###
-    erb :win # You may change/remove this line
+    redirect '/show' # You may change/remove this line
   end
   
   get '/lose' do
-    ### YOUR CODE HERE ###
-    erb :lose # You may change/remove this line
+    redirect '/show' # You may change/remove this line
   end
   
 end
