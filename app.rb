@@ -50,9 +50,9 @@ class HangpersonApp < Sinatra::Base
     end
     continue = @game.check_win_or_lose
     if continue == :win
-      erb :win
+      redirect '/win'
     elsif continue == :lose
-      erb :lose
+      redirect '/lose'
     elsif continue == :play
       redirect '/show'  
     end
@@ -68,11 +68,19 @@ class HangpersonApp < Sinatra::Base
   end
   
   get '/win' do
-    redirect '/show' # You may change/remove this line
+    if @game.check_win_or_lose == :win
+      erb :win
+    else 
+      redirect '/show' 
+    end
   end
   
   get '/lose' do
-    redirect '/show' # You may change/remove this line
+    if @game.check_win_or_lose == :lose
+      erb :lose
+    else
+      redirect '/show' 
+    end
   end
   
 end
